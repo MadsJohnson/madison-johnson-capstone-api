@@ -13,3 +13,7 @@ app.use(express.json());
 
 // Use CORS middleware
 app.use(cors());
+
+app.listen(PORT, () => {
+  console.log(`running at http://localhost:${PORT}`);
+});
