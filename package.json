@@ -4,7 +4,10 @@
   "description": "A comprehensive planner app backend designed to help users organize their daily, weekly, and monthly schedules. Built with Node, Express and Knex. This backend provides a robust set of features for managing events, tasks, priorities, to-dos, and goals. ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "knex migrate:latest",
+    "rollback": "knex migrate:rollback",
+    "seed": "knex seed:run"
   },
   "repository": {
     "type": "git",
@@ -21,7 +24,10 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "knex": "^3.1.0",
+    "migrate": "^2.0.1",
+    "migrations": "^1.4.1",
     "mysql": "^2.18.1",
-    "node": "^21.2.0"
+    "node": "^21.2.0",
+    "seeds": "^2.3.1"
   }
 }

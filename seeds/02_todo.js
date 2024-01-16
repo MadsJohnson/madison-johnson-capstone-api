@@ -17,8 +17,8 @@ exports.seed = async function (knex) {
    */
   exports.seed = async function (knex) {
     // Deletes ALL existing entries
-    await knex("todos").del();
-    await knex("todos").insert([
+    await knex("todo").del();
+    await knex("todo").insert([
       {
         task_id: 1,
         task: "To do test #1",
