@@ -21,15 +21,13 @@ exports.seed = async function (knex) {
     await knex("priorities").insert([
       {
         priority_id: 1,
-        title: "priority test #1",
-        description: "priority test #1 description",
+        priority: "priority test #1",
         dueDate: "2023-01-8",
         completed: false,
       },
       {
         priority_id: 2,
-        title: "priority test #2",
-        description: "priority test #2 description",
+        prioriity: "priority test #2",
         dueDate: "2023-01-24",
         completed: false,
       }
