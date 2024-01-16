@@ -1,0 +1,24 @@
+{
+  "name": "madison-johnson-capstone-api",
+  "version": "1.0.0",
+  "description": "A comprehensive planner app backend designed to help users organize their daily, weekly, and monthly schedules. Built with Node, Express and Knex. This backend provides a robust set of features for managing events, tasks, priorities, to-dos, and goals. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadsJohnson/madison-johnson-capstone-api.git"
+  },
+  "author": "Madison Johnson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MadsJohnson/madison-johnson-capstone-api/issues"
+  },
+  "homepage": "https://github.com/MadsJohnson/madison-johnson-capstone-api#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "knex": "^3.1.0",
+    "node": "^21.2.0"
+  }
+}
