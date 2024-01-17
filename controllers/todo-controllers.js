@@ -33,8 +33,22 @@ const getTodoById = async (req, res) => {
     
   };
 
+  const addTodo = (req, res) => {
+    knex("todo")
+      .returning(["task_id", "task", "due_date", "completed", "created_at", "updated_at"])
+      .insert(req.body)
+      .then((createdTodo) => {
+        res.status(201).json(createdTodo[0]);
+      })
+      .catch(() => {
+        res.status(500).json({ message: "Unable to create new todo" });
+      });
+  };
+  
+
 
 module.exports = {
   todo,
-  getTodoById
+  getTodoById,
+  addTodo
 };
