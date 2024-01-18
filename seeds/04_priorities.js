@@ -8,12 +8,14 @@ exports.seed = async function (knex) {
   await knex("digitalPlanner.priorities").del();
   await knex("digitalPlanner.priorities").insert([
     {
+      user_id: "1",
       priority_id: 1,
       priority: "priority test #1",
       due_date: "2023-01-8",
       completed: false,
     },
     {
+      user_id: "1",
       priority_id: 2,
       priority: "priority test #2", // Fix the typo here
       due_date: "2023-01-24",
