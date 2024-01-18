@@ -4,7 +4,8 @@ const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 8080;
 const todoRouter = require("./routes/todo-routes");
-const notesRouter = require("./routes/notes-routes")
+const notesRouter = require("./routes/notes-routes");
+const agendaRouter = require("./routes/agenda-routes")
 
 
 app.get("/", (req, res) => {
@@ -21,6 +22,9 @@ app.use("/todo", todoRouter);
 
 // Use the notesRouter for the / route
 app.use("/notes", notesRouter);
+
+// Use the notesRouter for the / route
+app.use("/agenda", agendaRouter);
 
 app.listen(PORT, () => {
   console.log(`running at http://localhost:${PORT}`);
