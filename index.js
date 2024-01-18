@@ -9,6 +9,7 @@ const agendaRouter = require("./routes/agenda-routes")
 const prioritiesRouter = require("./routes/priorities-routes")
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+// const jwt = require('jsonwebtoken');
 
 
 
@@ -38,6 +39,7 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 
