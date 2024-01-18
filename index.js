@@ -9,6 +9,7 @@ const agendaRouter = require("./routes/agenda-routes")
 const prioritiesRouter = require("./routes/priorities-routes")
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const knex = require('knex')(require('./knexfile'));
 // const jwt = require('jsonwebtoken');
 
 
@@ -19,27 +20,37 @@ app.use(express.json());
 app.use(cors());
 
 
-const users = {};
-
+// Signup endpoint
 app.post('/signup', async (req, res) => {
   try {
     if (!req.body) {
       return res.status(400).json({ error: 'Bad Request - Request body is missing or empty' });
     }
+
     const { username, name, password } = req.body;
+
+    // Check if username is already taken
+    const existingUser = await knex('users').where({ username }).first();
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    users[username] = {
+
+    // Insert user data into the database
+    await knex('users').insert({
+      username,
       name,
       password: hashedPassword,
-    };
-    console.log('User added:', users[username]);
+    });
+
     res.json({ success: true });
   } catch (error) {
-    console.error('Error hashing password:', error);
+    console.error('Error during signup:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 
 
