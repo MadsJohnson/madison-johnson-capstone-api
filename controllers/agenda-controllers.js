@@ -1,8 +1,11 @@
 const knex = require("knex")(require("../knexfile"));
 
-// Find all todos
-const getAgenda = (_req, res) => {
+// Find agenda items for user
+const getAgenda = (req, res) => {
+    const user_id = req.user.user_id; 
+    
     knex("agenda")
+        .where({ user_id }) // Filter by user_id
         .then((data) => {
             res.status(200).json(data);
         })
@@ -11,15 +14,15 @@ const getAgenda = (_req, res) => {
         });
 };
 
-
+// get individual agenda item for user 
 const getAgendaById = (req, res) => {
+    const user_id = req.user.user_id;
+    
     knex("agenda")
-        .where({ id: req.params.id })
+        .where({ id: req.params.id, user_id }) // Filter by agenda item ID and user_id
         .then((agendaFound) => {
             if (agendaFound.length === 0) {
-                return res
-                    .status(404)
-                    .json({ message: `agenda item with ID: ${req.params.id} not found` });
+                return res.status(404).json({ message: `Agenda item not found` });
             }
 
             const agendaData = agendaFound[0];
@@ -30,16 +33,19 @@ const getAgendaById = (req, res) => {
                 message: `Unable to retrieve agenda item with ID: ${req.params.id}`,
             });
         });
-
 };
 
 
+
 const addAgenda = (req, res) => {
+    const { date, time, task } = req.body;
+    const user_id = req.user.user_id; 
+
     knex("agenda")
-        .insert(req.body)
+        .insert({ date, time, task, user_id }) 
         .then((result) => {
             const agendaID = result[0];
-            return knex("agenda").where({ id: agendaID }).first();
+            return knex("agenda").where({ id: agendaID, user_id }).first();
         })
         .then((createAgenda) => {
             res.status(201).json(createAgenda);
@@ -50,21 +56,23 @@ const addAgenda = (req, res) => {
 };
 
 const updateAgenda = (req, res) => {
-    const {date, time, task } = req.body;
-  
+    const { date, time, task } = req.body;
+    const user_id = req.user.user_id; 
+
     knex("agenda")
-      .where({ id: req.params.id })
-      .update({ date, time, task})
-      .then(() => {
-        return knex("agenda").where({ id: req.params.id }).first();
-      })
-      .then((updatedAgenda) => {
-        res.status(200).json(updatedAgenda);
-      })
-      .catch((err) => {
-        res.status(400).send(`Error updating agenda: ${err}`);
-      });
-  };
+        .where({ id: req.params.id, user_id }) 
+        .update({ date, time, task })
+        .then(() => {
+            return knex("agenda").where({ id: req.params.id, user_id }).first();
+        })
+        .then((updatedAgenda) => {
+            res.status(200).json(updatedAgenda);
+        })
+        .catch((err) => {
+            res.status(400).send(`Error updating agenda: ${err}`);
+        });
+};
+
   
 
 const deleteAgenda = (req, res) => {
