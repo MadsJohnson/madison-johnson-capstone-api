@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
 require('dotenv').config();
+const app = express();
 const PORT = process.env.PORT || 8080;
+const secretKey = process.env.SECRET_KEY || 'defaultSecretKey';
 const todoRouter = require("./routes/todo-routes");
 const notesRouter = require("./routes/notes-routes");
 const agendaRouter = require("./routes/agenda-routes")
