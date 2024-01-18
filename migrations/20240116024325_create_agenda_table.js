@@ -8,6 +8,7 @@ exports.up = function(knex) {
         table.string("date").notNullable();
         table.string("time").notNullable();
         table.string("task").notNullable();
+        table.integer('user_id').unsigned().references('user_id').inTable('users');
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table
           .timestamp("updated_at")
