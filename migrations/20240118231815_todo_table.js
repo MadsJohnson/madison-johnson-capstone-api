@@ -3,11 +3,11 @@
  * @returns { Promise<void> }
  */
 exports.up = function(knex) {
-    return knex.schema.createTable("agenda", (table) => {
-        table.increments("id").primary();
-        table.string("date").notNullable();
-        table.string("time").notNullable();
+    return knex.schema.createTable("todo", (table) => {
+        table.increments("task_id").primary();
         table.string("task").notNullable();
+        table.string("due_date").notNullable();
+        table.boolean("completed").notNullable();
         table.integer('user_id').unsigned().references('user_id').inTable('users');
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table
@@ -22,5 +22,7 @@ exports.up = function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = function(knex) {
-    return knex.schema.dropTable("agenda"); 
+    console.log('Running down function for todo migration');
+    return knex.schema.dropTable("todo"); 
+   
 };
