@@ -14,12 +14,12 @@ const getNotes = (_req, res) => {
 
 const getNoteById = (req, res) => {
     knex("notes")
-        .where({ note_id: req.params.task_id })
+        .where({ note_id: req.params.note_id })
         .then((noteFound) => {
             if (noteFound.length === 0) {
                 return res
                     .status(404)
-                    .json({ message: `notes with ID: ${req.params.task_id} not found` });
+                    .json({ message: `notes with ID: ${req.params.note_id} not found` });
             }
 
             const noteData = noteFound[0];
@@ -56,7 +56,10 @@ const updateNote = (req, res) => {
       .where({ note_id: req.params.note_id })
       .update({ note, due_date, completed})
       .then(() => {
-        res.status(200).send("note updated successfully");
+        return knex("notes").where({ note_id: req.params.note_id }).first();
+      })
+      .then((updateTodo) => {
+        res.status(200).json(updatedNote);
       })
       .catch((err) => {
         res.status(400).send(`Error updating note: ${err}`);
