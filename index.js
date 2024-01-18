@@ -53,6 +53,27 @@ app.post('/signup', async (req, res) => {
 });
 
 
+// Login endpoint
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const user = await knex('users').where({ username }).first();
+
+    if (user && await bcrypt.compare(password, user.password)) {
+      // Passwords match, consider the user authenticated
+      res.json({ success: true });
+    } else {
+      // Invalid credentials
+      res.status(401).json({ error: 'Invalid login credentials' });
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to Our API");
