@@ -13,10 +13,13 @@ const knex = require('knex')(require('./knexfile'));
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
 
+app.use(express.json());
+app.use(cors());
 
 function authorize(req, res, next) {
   // Get the token from the Authorization header
   const authHeader = req.header('Authorization');
+  console.log(authHeader)
 
   // Check if the token is not provided
   if (!authHeader) {
@@ -24,30 +27,23 @@ function authorize(req, res, next) {
   }
 
   // Remove the "Bearer " prefix from the Authorization header
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace('Bearer ', '').replaceAll('"',  "");
+  console.log(token)
 
   try {
     // Verify and decode the token using the secret key
     const decoded = jwt.verify(token, secretKey);
+    console.log(decoded);
 
-    // Place the decoded contents on req.decoded
+  
     req.decoded = decoded;
-
-    // Continue to the next middleware or route handler
+    
     next();
   } catch (error) {
-    // Handle token verification errors
+    console.log(error)
     return res.status(401).json({ error: 'Unauthorized - Invalid token' });
   }
 }
-
-app.use(express.json());
-
-// Use CORS middleware
-app.use(cors());
-
-
-
 
 // Signup endpoint
 app.post('/signup', async (req, res) => {
@@ -55,15 +51,6 @@ app.post('/signup', async (req, res) => {
     if (!req.body) {
       return res.status(400).json({ error: 'Bad Request - Request body is missing or empty' });
     }
-     // Get the token from the Authorization header
-     const authHeader = req.header('Authorization');
-     const token = authHeader.replace('Bearer ', '');
- 
-     // Verify and decode the token using the secret key
-     const decoded = jwt.verify(token, secretKey);
- 
-     // Place the decoded contents on req.user
-     req.user = decoded;
 
     // Check if username is already taken
     const existingUser = await knex('users').where({ username }).first();
@@ -76,8 +63,8 @@ app.post('/signup', async (req, res) => {
 
     // Insert user data into the database
     await knex('users').insert({
-      username,
-      name,
+      username: req.body.username,
+      name: req.body.name,
       password: hashedPassword,
     });
 
@@ -109,6 +96,7 @@ app.post('/login', async (req, res) => {
       // Return the token in the response
       res.json({ token });
     } else {
+
       // Invalid credentials
       res.status(401).json({ error: 'Invalid login credentials' });
     }
@@ -150,18 +138,9 @@ app.get("/", (req, res) => {
 });
 
 app.use(authorize);
-
-// Use the todoRouter for the / route
 app.use("/todo", todoRouter);
-
-// Use the notesRouter for the / route
 app.use("/notes", notesRouter);
-
-// Use the agendaRouter for the / route
 app.use("/agenda", agendaRouter);
-
-
-// Use the agendaRouter for the / route
 app.use("/priorities", prioritiesRouter);
 
 app.listen(PORT, () => {
