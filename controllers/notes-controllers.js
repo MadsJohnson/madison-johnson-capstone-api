@@ -1,8 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
 
 // Find all todos
-const getNotes = (_req, res) => {
+const getNotes = (req, res) => {
+    const user_id = req.decoded.userId;
     knex("notes")
+        .where({ user_id })
         .then((data) => {
             res.status(200).json(data);
         })
@@ -13,8 +15,10 @@ const getNotes = (_req, res) => {
 
 
 const getNoteById = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("notes")
-        .where({ note_id: req.params.note_id })
+        .where({ note_id: req.params.note_id, user_id })
         .then((noteFound) => {
             if (noteFound.length === 0) {
                 return res
@@ -35,8 +39,11 @@ const getNoteById = (req, res) => {
 
 
 const addNote = (req, res) => {
+    const { note, due_date, completed } = req.body;
+    const user_id = req.decoded.userId; 
+
     knex("notes")
-        .insert(req.body)
+        .insert({note, due_date, completed, user_id})
         .then((result) => {
             const noteID = result[0];
             return knex("notes").where({ note_id: noteID }).first();
@@ -51,25 +58,27 @@ const addNote = (req, res) => {
 
 const updateNote = (req, res) => {
     const { note, due_date, completed } = req.body;
-  
+    const user_id = req.decoded.userId; 
+
     knex("notes")
-      .where({ note_id: req.params.note_id })
-      .update({ note, due_date, completed})
-      .then(() => {
-        return knex("notes").where({ note_id: req.params.note_id }).first();
-      })
-      .then((updateTodo) => {
-        res.status(200).json(updatedNote);
-      })
-      .catch((err) => {
-        res.status(400).send(`Error updating note: ${err}`);
-      });
-  };
-  
+        .where({ note_id: req.params.note_id, user_id })
+        .update({ note, due_date, completed })
+        .then(() => {
+            return knex("notes").where({ note_id: req.params.note_id }).first();
+        })
+        .then((updatedNote) => {
+            res.status(200).json(updatedNote);
+        })
+        .catch((err) => {
+            res.status(400).send(`Error updating note: ${err}`);
+        });
+};
+
 
 const deleteNote = (req, res) => {
+    const user_id = req.decoded.userId; 
     knex("notes")
-        .where({ note_id: req.params.note_id })
+        .where({ note_id: req.params.note_id , user_id})
         .del()
         .then((result) => {
             if (result === 0) {

@@ -1,8 +1,11 @@
 const knex = require("knex")(require("../knexfile"));
 
 // Find all priorities
-const getPriorities = (_req, res) => {
+const getPriorities = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("priorities")
+    .where({ user_id }) // Filter by user_id
         .then((data) => {
             res.status(200).json(data);
         })
@@ -13,8 +16,10 @@ const getPriorities = (_req, res) => {
 
 
 const getPrioritiesById = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("priorities")
-        .where({ priority_id: req.params.priority_id })
+        .where({ priority_id: req.params.priority_id, user_id })
         .then((priorityFound) => {
             if (priorityFound.length === 0) {
                 return res
@@ -22,7 +27,7 @@ const getPrioritiesById = (req, res) => {
                     .json({ message: `priority with ID: ${req.params.priority_id} not found` });
             }
 
-            const priorityData = noteFound[0];
+            const priorityData = priorityFound[0]; 
             res.status(200).json(priorityData);
         })
         .catch(() => {
@@ -30,13 +35,15 @@ const getPrioritiesById = (req, res) => {
                 message: `Unable to retrieve note data for todo with ID: ${req.params.priority_id}`,
             });
         });
-
 };
 
 
 const addPriority = (req, res) => {
+    const { priority, due_date, completed} = req.body;
+    const user_id = req.decoded.userId;
+
     knex("priorities")
-        .insert(req.body)
+        .insert({ priority, due_date, completed, user_id})
         .then((result) => {
             const priorityId = result[0];
             return knex("priorities").where({ priority_id: priorityId }).first();
@@ -51,9 +58,10 @@ const addPriority = (req, res) => {
 
 const updatePriority = (req, res) => {
     const { priority, due_date, completed} = req.body;
+    const user_id = req.decoded.userId;
   
     knex("priorities")
-      .where({ priority_id: req.params.priority_id })
+      .where({ priority_id: req.params.priority_id, user_id})
       .update({ priority, due_date, completed})
       .then(() => {
         return knex("priorities").where({ priority_id: req.params.priority_id }).first();
@@ -68,8 +76,10 @@ const updatePriority = (req, res) => {
   
 
 const deletePriority = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("priorities")
-        .where({ priority_id: req.params.priority_id })
+        .where({ priority_id: req.params.priority_id, user_id })
         .del()
         .then((result) => {
             if (result === 0) {

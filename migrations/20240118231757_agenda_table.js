@@ -3,11 +3,12 @@
  * @returns { Promise<void> }
  */
 exports.up = function(knex) {
-    return knex.schema.createTable("notes", (table) => {
-        table.increments("note_id").primary();
-        table.string("note").notNullable();
-        table.string("due_date").notNullable();
-        table.boolean("completed").notNullable();
+    return knex.schema.createTable("agenda", (table) => {
+        table.increments("id").primary();
+        table.string("date").notNullable();
+        table.string("time").notNullable();
+        table.string("task").notNullable();
+        table.integer('user_id').unsigned().references('user_id').inTable('users');
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table
           .timestamp("updated_at")
@@ -21,5 +22,5 @@ exports.up = function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = function(knex) {
-    return knex.schema.dropTable("notes"); 
+    return knex.schema.dropTable("agenda"); 
 };
