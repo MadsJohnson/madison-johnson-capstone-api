@@ -47,8 +47,6 @@ app.use(express.json());
 app.use(cors());
 
 
-app.use(authorize);
-
 
 
 // Signup endpoint
@@ -151,6 +149,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to Our API");
 });
 
+app.use(authorize);
 
 // Use the todoRouter for the / route
 app.use("/todo", todoRouter);

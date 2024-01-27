@@ -2,9 +2,7 @@ const knex = require("knex")(require("../knexfile"));
 
 // Find agenda items for user
 const getAgenda = (req, res) => {
-    console.log('Authorization header:', req.headers.authorization);
     const user_id = req.decoded.userId; 
-    console.log('user_id:', user_id); // Log user_id
     
     knex("agenda")
         .where({ user_id }) // Filter by user_id

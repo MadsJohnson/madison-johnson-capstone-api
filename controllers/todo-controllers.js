@@ -1,8 +1,11 @@
 const knex = require("knex")(require("../knexfile"));
 
 // Find all todos
-const todo = (_req, res) => {
+const todo = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("todo")
+        .where({ user_id }) // Filter by user_id
         .then((data) => {
             res.status(200).json(data);
         })
@@ -12,9 +15,11 @@ const todo = (_req, res) => {
 };
 
 
-const getTodoById = async (req, res) => {
+const getTodoById = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("todo")
-        .where({ task_id: req.params.task_id })
+        .where({ task_id: req.params.task_id, user_id })
         .then((todoFound) => {
             if (todoFound.length === 0) {
                 return res
@@ -35,8 +40,11 @@ const getTodoById = async (req, res) => {
 
 
 const addTodo = (req, res) => {
+    const { task, due_date, completed } = req.body;
+    const user_id = req.decoded.userId;
+
     knex("todo")
-        .insert(req.body)
+        .insert({task, due_date, completed, user_id})
         .then((result) => {
             const todoId = result[0];
             return knex("todo").where({ task_id: todoId }).first();
@@ -51,22 +59,25 @@ const addTodo = (req, res) => {
 
 const updateTodo = (req, res) => {
     const { task, due_date, completed } = req.body;
-  
+    const user_id = req.decoded.userId;
+
     knex("todo")
-      .where({ task_id: req.params.task_id })
-      .update({ task, due_date, completed })
-      .then(() => {
-        res.status(200).send("Todo updated successfully");
-      })
-      .catch((err) => {
-        res.status(400).send(`Error updating todo: ${err}`);
-      });
-  };
-  
+        .where({ task_id: req.params.task_id, user_id})
+        .update({ task, due_date, completed })
+        .then(() => {
+            res.status(200).send("Todo updated successfully");
+        })
+        .catch((err) => {
+            res.status(400).send(`Error updating todo: ${err}`);
+        });
+};
+
 
 const deleteToDo = (req, res) => {
+    const user_id = req.decoded.userId;
+
     knex("todo")
-        .where({ task_id: req.params.task_id })
+        .where({ task_id: req.params.task_id , user_id})
         .del()
         .then((result) => {
             if (result === 0) {
