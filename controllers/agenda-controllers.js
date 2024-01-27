@@ -2,11 +2,14 @@ const knex = require("knex")(require("../knexfile"));
 
 // Find agenda items for user
 const getAgenda = (req, res) => {
-    const user_id = req.user.user_id; 
+    console.log('Authorization header:', req.headers.authorization);
+    const user_id = req.decoded.userId; 
+    console.log('user_id:', user_id); // Log user_id
     
     knex("agenda")
         .where({ user_id }) // Filter by user_id
         .then((data) => {
+            console.log('Agenda data:', data); 
             res.status(200).json(data);
         })
         .catch((err) => {
@@ -16,7 +19,7 @@ const getAgenda = (req, res) => {
 
 // get individual agenda item for user 
 const getAgendaById = (req, res) => {
-    const user_id = req.user.user_id;
+    const user_id = req.decoded.userId;
     
     knex("agenda")
         .where({ id: req.params.id, user_id }) // Filter by agenda item ID and user_id
@@ -39,7 +42,7 @@ const getAgendaById = (req, res) => {
 
 const addAgenda = (req, res) => {
     const { date, time, task } = req.body;
-    const user_id = req.user.user_id; 
+    const user_id = req.decoded.userId; 
 
     knex("agenda")
         .insert({ date, time, task, user_id }) 
@@ -57,7 +60,7 @@ const addAgenda = (req, res) => {
 
 const updateAgenda = (req, res) => {
     const { date, time, task } = req.body;
-    const user_id = req.user.user_id; 
+    const user_id = req.decoded.userId; 
 
     knex("agenda")
         .where({ id: req.params.id, user_id }) 
@@ -76,8 +79,9 @@ const updateAgenda = (req, res) => {
   
 
 const deleteAgenda = (req, res) => {
+    const user_id = req.decoded.userId; 
     knex("agenda")
-        .where({ id: req.params.id })
+        .where({ id: req.params.id, user_id })
         .del()
         .then((result) => {
             if (result === 0) {
