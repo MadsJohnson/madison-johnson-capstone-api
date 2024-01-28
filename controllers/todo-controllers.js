@@ -3,9 +3,10 @@ const knex = require("knex")(require("../knexfile"));
 // Find all todos
 const todo = (req, res) => {
     const user_id = req.decoded.userId;
+    const { date } = req.query;
 
     knex("todo")
-        .where({ user_id }) // Filter by user_id
+        .where({ user_id, date}) // Filter by user_id and date 
         .then((data) => {
             res.status(200).json(data);
         })

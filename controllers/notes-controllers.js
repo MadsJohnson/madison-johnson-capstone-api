@@ -3,8 +3,10 @@ const knex = require("knex")(require("../knexfile"));
 // Find all todos
 const getNotes = (req, res) => {
     const user_id = req.decoded.userId;
+    const { date } = req.query;
+
     knex("notes")
-        .where({ user_id })
+        .where({ user_id, date })
         .then((data) => {
             res.status(200).json(data);
         })

@@ -1,13 +1,14 @@
 const knex = require("knex")(require("../knexfile"));
 
-// Find agenda items for user
+// Find agenda items for user buy date
 const getAgenda = (req, res) => {
-    const user_id = req.decoded.userId; 
-    
-    knex("agenda")
-        .where({ user_id }) // Filter by user_id
+    const user_id = req.decoded.userId;
+    const { date } = req.query;
+
+    // Assuming your database column for date is named 'date'
+    knex("digitalPlanner.agenda")
+        .where({ user_id, date })
         .then((data) => {
-            console.log('Agenda data:', data); 
             res.status(200).json(data);
         })
         .catch((err) => {
@@ -77,7 +78,7 @@ const updateAgenda = (req, res) => {
   
 
 const deleteAgenda = (req, res) => {
-    const user_id = req.decoded.userId; 
+    const user_id = req.user.userId; 
     knex("agenda")
         .where({ id: req.params.id, user_id })
         .del()
