@@ -6,7 +6,7 @@ const todo = (req, res) => {
     const { date } = req.query;
 
     knex("todo")
-        .where({ user_id, date}) // Filter by user_id and date 
+        .where({ user_id, due_date: date}) // Filter by user_id and date 
         .then((data) => {
             res.status(200).json(data);
         })

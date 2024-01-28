@@ -6,7 +6,7 @@ const getNotes = (req, res) => {
     const { date } = req.query;
 
     knex("notes")
-        .where({ user_id, date })
+        .where({ user_id, due_date: date })
         .then((data) => {
             res.status(200).json(data);
         })
