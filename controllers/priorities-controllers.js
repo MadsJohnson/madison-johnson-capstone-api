@@ -10,6 +10,8 @@ const getPriorities = (req, res) => {
 
     knex("priorities")
         .where({ user_id, due_date: date })
+        .orderBy('completed', 'desc') 
+        .orderBy('created_at', 'asc')  
         .then((data) => {
             res.status(200).json(data);
         })
@@ -31,7 +33,7 @@ const getPrioritiesById = (req, res) => {
                     .json({ message: `priority with ID: ${req.params.priority_id} not found` });
             }
 
-            const priorityData = priorityFound[0]; 
+            const priorityData = priorityFound[0];
             res.status(200).json(priorityData);
         })
         .catch(() => {
@@ -43,11 +45,11 @@ const getPrioritiesById = (req, res) => {
 
 
 const addPriority = (req, res) => {
-    const { priority, due_date, completed} = req.body;
+    const { priority, due_date, completed } = req.body;
     const user_id = req.decoded.userId;
 
     knex("priorities")
-        .insert({ priority, due_date, completed, user_id})
+        .insert({ priority, due_date, completed, user_id })
         .then((result) => {
             const priorityId = result[0];
             return knex("priorities").where({ priority_id: priorityId }).first();
@@ -61,23 +63,23 @@ const addPriority = (req, res) => {
 };
 
 const updatePriority = (req, res) => {
-    const { priority, due_date, completed} = req.body;
+    const { priority, due_date, completed } = req.body;
     const user_id = req.decoded.userId;
-  
+
     knex("priorities")
-      .where({ priority_id: req.params.priority_id, user_id})
-      .update({ priority, due_date, completed})
-      .then(() => {
-        return knex("priorities").where({ priority_id: req.params.priority_id }).first();
-      })
-      .then((updatedPriority) => {
-        res.status(200).json(updatedPriority);
-      })
-      .catch((err) => {
-        res.status(400).send(`Error updating priority: ${err}`);
-      });
-  };
-  
+        .where({ priority_id: req.params.priority_id, user_id })
+        .update({ priority, due_date, completed })
+        .then(() => {
+            return knex("priorities").where({ priority_id: req.params.priority_id }).first();
+        })
+        .then((updatedPriority) => {
+            res.status(200).json(updatedPriority);
+        })
+        .catch((err) => {
+            res.status(400).send(`Error updating priority: ${err}`);
+        });
+};
+
 
 const deletePriority = (req, res) => {
     const user_id = req.decoded.userId;
@@ -98,7 +100,6 @@ const deletePriority = (req, res) => {
             res.status(500).json({ message: "Unable to delete priority" });
         });
 };
-
 
 
 module.exports = {

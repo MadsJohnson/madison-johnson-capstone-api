@@ -1,12 +1,19 @@
 const knex = require("knex")(require("../knexfile"));
 
-// Find all todos
-const todo = (req, res) => {
+// Find all and sort by completed and created_at todos
+
+const getTodo = (req, res) => {
     const user_id = req.decoded.userId;
     const { date } = req.query;
 
+    if (!date) {
+        return res.status(400).send("Date parameter is required");
+    }
+
     knex("todo")
-        .where({ user_id, due_date: date}) // Filter by user_id and date 
+        .where({ user_id, due_date: date })
+        .orderBy('completed', 'desc')  
+        .orderBy('created_at', 'asc')
         .then((data) => {
             res.status(200).json(data);
         })
@@ -97,7 +104,7 @@ const deleteToDo = (req, res) => {
 
 
 module.exports = {
-    todo,
+    getTodo,
     getTodoById,
     addTodo,
     deleteToDo,

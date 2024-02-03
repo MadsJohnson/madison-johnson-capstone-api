@@ -1,11 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
 
-// Find agenda items for user buy date
+// Find agenda items for user by date
 const getAgenda = (req, res) => {
     const user_id = req.decoded.userId;
     const { date } = req.query;
 
-    // Assuming your database column for date is named 'date'
     knex("digitalPlanner.agenda")
         .where({ user_id, date })
         .then((data) => {

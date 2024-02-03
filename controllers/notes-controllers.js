@@ -41,11 +41,13 @@ const getNoteById = (req, res) => {
 
 
 const addNote = (req, res) => {
-    const { note, due_date, completed } = req.body;
+    const { title, note, due_date } = req.body;
     const user_id = req.decoded.userId; 
 
+    console.log("Received note data:", { title, note, due_date, user_id });
+
     knex("notes")
-        .insert({note, due_date, completed, user_id})
+        .insert({title, note, due_date, user_id})
         .then((result) => {
             const noteID = result[0];
             return knex("notes").where({ note_id: noteID }).first();
@@ -59,12 +61,12 @@ const addNote = (req, res) => {
 };
 
 const updateNote = (req, res) => {
-    const { note, due_date, completed } = req.body;
+    const { title, note, due_date } = req.body;
     const user_id = req.decoded.userId; 
 
     knex("notes")
         .where({ note_id: req.params.note_id, user_id })
-        .update({ note, due_date, completed })
+        .update({ title, note, due_date })
         .then(() => {
             return knex("notes").where({ note_id: req.params.note_id }).first();
         })
