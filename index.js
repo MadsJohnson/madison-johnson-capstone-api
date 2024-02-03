@@ -52,6 +52,8 @@ app.post('/signup', async (req, res) => {
       return res.status(400).json({ error: 'Bad Request - Request body is missing or empty' });
     }
 
+    const { name, username, password } = req.body;
+
     // Check if username is already taken
     const existingUser = await knex('users').where({ username }).first();
     if (existingUser) {
@@ -129,7 +131,6 @@ app.get('/profile', authorize, async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 
 
